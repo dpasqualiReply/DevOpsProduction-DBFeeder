@@ -1,0 +1,2 @@
+file -bi ratings.dat
+iconv -f us-ascii -t utf-8 ratings.dat > ratingsUTF8.dat
