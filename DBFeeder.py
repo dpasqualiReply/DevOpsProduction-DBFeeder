@@ -94,14 +94,14 @@ if __name__ == '__main__':
         m20Connector.initDB()
 
         # Init to read
-        moviesDS = DatasetReader.initWithFraction(dataset_path + 'movies.csv', 1.0, ',', init=True)
-        gtagsDS = DatasetReader.initWithFraction(dataset_path + 'genome-tags.csv', 1.0, ',', init=True)
-        linksDS = DatasetReader.initWithFraction(dataset_path + 'links.csv', 1.0, ',', init=True)
+        moviesDS = DatasetReader.initWithFraction(dataset_path + '/movies.csv', 1.0, ',', init=True)
+        gtagsDS = DatasetReader.initWithFraction(dataset_path + '/genome-tags.csv', 1.0, ',', init=True)
+        linksDS = DatasetReader.initWithFraction(dataset_path + '/links.csv', 1.0, ',', init=True)
 
         #Just init
-        ratingsDS = DatasetReader(dataset_path + "ratings.csv", init=True)
-        tagsDS = DatasetReader(dataset_path + "tags.csv", init=True)
-        gscoresDS = DatasetReader(dataset_path + "genome-scores.csv", init=True)
+        ratingsDS = DatasetReader(dataset_path + "/ratings.csv", init=True)
+        tagsDS = DatasetReader(dataset_path + "/tags.csv", init=True)
+        gscoresDS = DatasetReader(dataset_path + "/genome-scores.csv", init=True)
 
         if(init_clear == False):
             for movie in moviesDS.readPercentage():
@@ -120,21 +120,21 @@ if __name__ == '__main__':
 
         print "Load " + str(fractionToRead * 100) + "% of each Dataset into the Database"
 
-        ratingsDS = DatasetReader.initWithFraction(dataset_path + "ratings.csv", fractionToRead, ',')
+        ratingsDS = DatasetReader.initWithFraction(dataset_path + "/ratings.csv", fractionToRead, ',')
         print "ratings loaded"
         for rat in ratingsDS.readPercentage():
             #print str(rat)
             m20Connector.insert(M20Rating(rat['userId'], rat['movieId'], rat['rating'], rat['timestamp']))
 
 
-        tagsDS = DatasetReader.initWithFraction(dataset_path + "tags.csv", fractionToRead, ',')
+        tagsDS = DatasetReader.initWithFraction(dataset_path + "/tags.csv", fractionToRead, ',')
         print "tags loaded"
         for tag in tagsDS.readPercentage():
             #print str(tag)
             m20Connector.insert(M20Tag(tag['userId'], tag['movieId'], tag['tag'], tag['timestamp']))
 
         
-        gscoresDS = DatasetReader.initWithFraction(dataset_path + "genome-scores.csv", fractionToRead, ',')
+        gscoresDS = DatasetReader.initWithFraction(dataset_path + "/genome-scores.csv", fractionToRead, ',')
         print "gscores loaded"       
         for score in gscoresDS.readPercentage():
             #print str(score)
