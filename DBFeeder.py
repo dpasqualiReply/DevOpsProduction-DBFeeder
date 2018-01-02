@@ -1,73 +1,82 @@
 from DatasetReader import DatasetReader
 from dbConnector.M20PSQLConnector import *
-
-"""
-    Lauch with DBFeeder.py fractionToRead
-"""
+import getopt
 
 def printUsage():
-    print "Usage [OPTION] [fractionToRead]"
-    print "[OPTION] = "
-    print "-init to init tables an populate with first level tables"
-    print "-dropall to drop all the tables and reset the system"
-    print "fractionToRead = percentage of the dataset to read. Default = 1/20"
+    print "Usage --help | --init | --initclear | --dropall | [--fraction=FRACTION]  [--datasets=PATH] --psql_user=USER --psql_password=PASSWORD"
+    print "--help                      show this message"
+    print "--init                       to init tables an populate with first level tables"
+    print "--initclear                  to init tables an populate with first level tables"
+    print "--dropall                    to drop all the tables and reset the system"
+    print ""
+    print "--datasets=PATH              path of csv dataset files. Default = datasets/data/"
+    print "--fraction=FRACTION          percentage of the dataset to read. Default = 0.05"
+    print "--psql_user=USER             postgres DB user"
+    print "--psql_password=PASSWORD     portegres DB password"
 
 
 if __name__ == '__main__':
 
-    # cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)", (100, "abc'def"))
-    # cur.execute("SELECT * FROM test;")
-    # print cur.fetchone()
-
     fractionToRead = 0.05
-
+    dataset_path = 'datasets/data/'
     initDB = False
     init_clear = False
     dropAll = False
 
+    psql_user = ""
+    psql_pass = ""
+
+
     #dropAll = True
     #initDB = True
 
+    
+    print "ARGV:    ", sys.argv[1:]
 
-    if(len(sys.argv) == 2):
+    opts, rem = getopt.getopt(sys.argv[1:], "", ['help',
+     'init',
+     'initclear',
+     'dropall',
+     'fraction=',
+     'datasets=',
+     'psql_user=',
+     'psql_password='])
 
-        if(str(sys.argv[1]) == '-init'):
+
+    print "OPTIONS: ", opts
+
+    for opt, arg in opts:
+        if opt == '--help':
+            printUsage()
+            sys.exit(0)
+        if opt == '--init':
             initDB = True
-
-        elif (sys.argv[1] == '-initclear'):
-            initDB = True
-            init_clear = True;
-
-
-        elif(sys.argv[1] == '-dropall'):
-            dropAll = True
-
-        else:
-            fractionToRead = float(sys.argv[1])
-
-    if(len(sys.argv) == 3):
-
-        if (sys.argv[1] == '-initclear' or sys.argv[2] == '-initclear'):
+        if opt == '--initclear':
             initDB = True
             init_clear = True
-
-        if(sys.argv[1] == '-init' or sys.argv[2] == '-init'):
-            initDB = True
-
-        if(sys.argv[1] == '-dropall' or sys.argv[2] == '-dropall'):
+        if opt == '--dropall':
             dropAll = True
+        if opt == '--fraction':
+            fractionToRead = float(arg)
+        if opt == '--datasets':
+            dataset_path = arg
+        if opt == '--psql_user':
+            psql_user = arg
+        if opt == '--psql_password':
+            psql_pass = arg            
+            
 
-        if(initDB == False and dropAll == False):
-            printUsage()
-            sys.exit(1)
-
-        if((initDB and dropAll) == False):
-            fractionToRead = float(sys.argv[1])
-
-
+    print "init DB      ", str(initDB)
+    print "init clear   ", str(init_clear)
+    print "dropall      ", str(dropAll)
+    print "fraction     ", str(fractionToRead)
+    print "dataset path ", str(dataset_path)
+    print "psql user    ", str(psql_user)
+    print "psql pass    ", str(psql_pass)
 
     #m20Connector = M20PSQLConnector('data_reply_db', 'dario', 'localhost', 'password')
-    m20Connector = M20PSQLConnector('postgres', 'cloudera-scm', 'localhost', '7432', 'y6jOvCiNAz')
+    #m20Connector = M20PSQLConnector('postgres', 'cloudera-scm', 'localhost', '7432', 'y6jOvCiNAz')
+    m20Connector = M20PSQLConnector('postgres', psql_user, 'localhost', '7432', psql_pass)
     m20Connector.connect()
 
     if (dropAll):
@@ -85,14 +94,14 @@ if __name__ == '__main__':
         m20Connector.initDB()
 
         # Init to read
-        moviesDS = DatasetReader.initWithFraction('datasets/data/movies.csv', 1.0, ',', init=True)
-        gtagsDS = DatasetReader.initWithFraction('datasets/data/genome-tags.csv', 1.0, ',', init=True)
-        linksDS = DatasetReader.initWithFraction('datasets/data/links.csv', 1.0, ',', init=True)
+        moviesDS = DatasetReader.initWithFraction(dataset_path + 'movies.csv', 1.0, ',', init=True)
+        gtagsDS = DatasetReader.initWithFraction(dataset_path + 'genome-tags.csv', 1.0, ',', init=True)
+        linksDS = DatasetReader.initWithFraction(dataset_path + 'links.csv', 1.0, ',', init=True)
 
         #Just init
-        ratingsDS = DatasetReader("datasets/data/ratings.csv", init=True)
-        tagsDS = DatasetReader("datasets/data/tags.csv", init=True)
-        gscoresDS = DatasetReader("datasets/data/genome-scores.csv", init=True)
+        ratingsDS = DatasetReader(dataset_path + "ratings.csv", init=True)
+        tagsDS = DatasetReader(dataset_path + "tags.csv", init=True)
+        gscoresDS = DatasetReader(dataset_path + "genome-scores.csv", init=True)
 
         if(init_clear == False):
             for movie in moviesDS.readPercentage():
@@ -111,21 +120,21 @@ if __name__ == '__main__':
 
         print "Load " + str(fractionToRead * 100) + "% of each Dataset into the Database"
 
-        ratingsDS = DatasetReader.initWithFraction("datasets/data/ratings.csv", fractionToRead, ',')
+        ratingsDS = DatasetReader.initWithFraction(dataset_path + "ratings.csv", fractionToRead, ',')
         print "ratings loaded"
         for rat in ratingsDS.readPercentage():
             #print str(rat)
             m20Connector.insert(M20Rating(rat['userId'], rat['movieId'], rat['rating'], rat['timestamp']))
 
 
-        tagsDS = DatasetReader.initWithFraction("datasets/data/tags.csv", fractionToRead, ',')
+        tagsDS = DatasetReader.initWithFraction(dataset_path + "tags.csv", fractionToRead, ',')
         print "tags loaded"
         for tag in tagsDS.readPercentage():
             #print str(tag)
             m20Connector.insert(M20Tag(tag['userId'], tag['movieId'], tag['tag'], tag['timestamp']))
 
         
-        gscoresDS = DatasetReader.initWithFraction("datasets/data/genome-scores.csv", fractionToRead, ',')
+        gscoresDS = DatasetReader.initWithFraction(dataset_path + "genome-scores.csv", fractionToRead, ',')
         print "gscores loaded"       
         for score in gscoresDS.readPercentage():
             #print str(score)
