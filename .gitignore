@@ -1,6 +1,7 @@
 *.class
 *.log
 *.csv
+*.pyc
 target/
 .idea/
 .vscode/
