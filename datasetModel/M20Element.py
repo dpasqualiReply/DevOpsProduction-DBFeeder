@@ -36,7 +36,7 @@ class M20Tag(M20Element):
         self.timestamp = timestamp
 
         self.insertQuery = """INSERT INTO %s (userId, movieId, tag, timestamp)
-                                      VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING;"""%(self.name, '%s', '%s', '%s', '%s')
+                                      VALUES (%s, %s, %s, %s);"""%(self.name, '%s', '%s', '%s', '%s')
 
         self.insertData = (self.userId, self.movieId, self.tag, self.timestamp)
 
@@ -64,7 +64,7 @@ class M20Movie(M20Element):
         self.genres = genres
 
         self.insertQuery = """INSERT INTO %s (movieId, title, genres)
-                                              VALUES (%s, %s, %s) ON CONFLICT DO NOTHING;"""%(self.name, '%s', '%s', '%s')
+                                              VALUES (%s, %s, %s);"""%(self.name, '%s', '%s', '%s')
 
         self.insertData = (self.movieId,
                     self.title,
@@ -94,7 +94,7 @@ class M20Rating(M20Element):
         self.timestamp = timestamp
 
         self.insertQuery = """INSERT INTO %s (userId, movieId, rating, timestamp)
-                                                      VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING;"""\
+                                                      VALUES (%s, %s, %s, %s);"""\
                            %(self.name, '%s', '%s', '%s', '%s')
 
         self.insertData = (self.userId,
@@ -127,7 +127,7 @@ class M20Link(M20Element):
         self.tmdbId = tmdbid
 
         self.insertQuery = """INSERT INTO %s (movieId, imdbId, tmdbId)
-                                                              VALUES (%s, %s, %s) ON CONFLICT DO NOTHING;"""\
+                                                              VALUES (%s, %s, %s);"""\
                            %(self.name, '%s', '%s', '%s')
 
         self.insertData = (self.movieId,
@@ -161,7 +161,7 @@ class M20GenomeScore(M20Element):
 
 
         self.insertQuery = """INSERT INTO %s (movieId, tagId, relevance)
-                                                                      VALUES (%s, %s, %s) ON CONFLICT DO NOTHING;"""\
+                                                                      VALUES (%s, %s, %s);"""\
                            %(self.name, '%s', '%s', '%s')
 
         self.insertData = (self.movieId,
@@ -189,7 +189,7 @@ class M20GenomeTag(M20Element):
         self.tagId = tagid
         self.tag = tag
 
-        self.insertQuery = """INSERT INTO %s (tagId, tag) VALUES (%s, %s) ON CONFLICT DO NOTHING;"""%\
+        self.insertQuery = """INSERT INTO %s (tagId, tag) VALUES (%s, %s);"""%\
                            (self.name, '%s', '%s')
 
         self.insertData = (self.tagId,
