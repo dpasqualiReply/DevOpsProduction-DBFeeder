@@ -1,0 +1,1 @@
+run with "python PSQLInterface.py --database=data_reply_db --psql_user=dario --psql_password=password --host=localhost --port=7432 --selectAllFrom=TABLENAME"
