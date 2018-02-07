@@ -134,11 +134,11 @@ if __name__ == '__main__':
             m20Connector.insert(M20Tag(tag['userId'], tag['movieId'], tag['tag'], tag['timestamp']))
 
         
-        gscoresDS = DatasetReader.initWithFraction(dataset_path + "/genome-scores.csv", fractionToRead, ',')
-        print "gscores loaded"       
-        for score in gscoresDS.readPercentage():
-            #print str(score)
-            m20Connector.insert(M20GenomeScore(score['movieId'], score['tagId'], score['relevance']))
+        #gscoresDS = DatasetReader.initWithFraction(dataset_path + "/genome-scores.csv", fractionToRead, ',')
+        #print "gscores loaded"       
+        #for score in gscoresDS.readPercentage():
+        #    #print str(score)
+        #    m20Connector.insert(M20GenomeScore(score['movieId'], score['tagId'], score['relevance']))
 
 
     m20Connector.close()

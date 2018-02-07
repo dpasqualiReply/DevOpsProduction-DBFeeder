@@ -15,7 +15,7 @@ class DatasetReader(object):
         self.delimiter = delimiter
         self.info = dict()
 
-        if os.path.exists(filename + '.info') | init is True:
+        if not os.path.exists(filename + '.info') | init is True:
 
             f = file(filename + '.info', "w")
             self.info['next'] = 0
